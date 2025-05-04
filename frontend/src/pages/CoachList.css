@@ -1,0 +1,73 @@
+/* Container styling */
+.coach-list-container {
+    background-color: #f8f9fa; /* Light gray background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for better appearance */
+    padding: 20px; /* Add padding inside the container */
+}
+
+/* Card styling */
+.custom-card {
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column; /* Ensure content stacks vertically */
+    justify-content: space-between; /* Distribute content evenly */
+    height: auto; /* Allow the card to adjust its height dynamically */
+    margin: 0 auto; /* Center the card horizontally */
+}
+
+/* Image styling */
+.custom-card-img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    margin: 20px auto; /* Add spacing around the image */
+    border-radius: 50%; /* Makes the image a circle */
+}
+
+/* Title styling */
+.custom-card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Text styling */
+.custom-card-text {
+    font-size: 1rem;
+    color: #6c757d;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Button container styling */
+.button-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Add spacing above the buttons */
+}
+
+/* Message button styling */
+.message-button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+/* View Profile button styling */
+.view-profile-button {
+    flex-grow: 1; /* Takes up the remaining space */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
