@@ -14,6 +14,7 @@ import CoachForm from "./CoachForm";
 import FrontBody from "../components/FrontBody";
 import BackBody from "../components/BackBody";
 import BodyExercise from "./BodyExercise";
+import SignupChoice from "./SignupChoice";
 
 function Index() {
   return (
@@ -29,6 +30,7 @@ function Index() {
         <Route path="/chat-list" element={<ChatList />} />
         <Route path="/chat/:id" element={<Chat />} />
         <Route path="/coach-form" element={<CoachForm />} />
+        <Route path="/signup-choice" element={<SignupChoice />}/>
         <Route path="/body-exercise/:bodyPart" element={<BodyExercise />} />
       </Routes>
       <Footer />

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import "./Signup.css"; // Import custom CSS for styling
+import { Form, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./Signup.css";
 
 function Signup() {
     const [formData, setFormData] = useState({
@@ -9,19 +10,41 @@ function Signup() {
         email: "",
         phone: "",
         password: "",
+        confirmPassword: "",
     });
 
-    const navigate = useNavigate(); // Initialize useNavigate
+    const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
+        setError("");
+        setSuccess("");
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Form Data Submitted:", formData);
-        // Add your form submission logic here
+        if (formData.password !== formData.confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        try {
+            const res = await axios.post("http://localhost:5000/api/user/signup", {
+                username: formData.username,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+            });
+
+            setSuccess(res.data.message);
+            localStorage.setItem("token", res.data.token);
+            setTimeout(() => navigate("/coach-list"), 1000);
+        } catch (err) {
+            setError(err.response?.data?.message || "Registration failed");
+        }
     };
 
     return (
@@ -32,10 +55,10 @@ function Signup() {
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter your username"
                         name="username"
                         value={formData.username}
                         onChange={handleChange}
+                        placeholder="Enter username"
                         required
                     />
                 </Form.Group>
@@ -44,22 +67,22 @@ function Signup() {
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="email"
-                        placeholder="Enter your email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
+                        placeholder="Enter email"
                         required
                     />
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formPhone">
-                    <Form.Label>Phone Number</Form.Label>
+                    <Form.Label>Phone</Form.Label>
                     <Form.Control
                         type="tel"
-                        placeholder="Enter your phone number"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
+                        placeholder="Enter phone number"
                         required
                     />
                 </Form.Group>
@@ -68,28 +91,37 @@ function Signup() {
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                         type="password"
-                        placeholder="Enter your password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
+                        placeholder="Enter password"
                         required
                     />
                 </Form.Group>
 
-                <Button variant="dark" type="submit" className="w-100">
-                    Signup
-                </Button>
-            </Form>
+                <Form.Group className="mb-3" controlId="formConfirmPassword">
+                    <Form.Label>Confirm Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Confirm password"
+                        required
+                    />
+                </Form.Group>
 
-            <div className="text-center mt-3">
-                <Button
-                    variant="link"
-                    onClick={() => navigate("/login")} // Corrected route path
-                    className="toggle-button"
-                >
-                    Already have an account? Login
-                </Button>
-            </div>
+                {error && <div className="text-danger text-center mb-2">{error}</div>}
+                {success && <div className="text-success text-center mb-2">{success}</div>}
+
+                <Button variant="dark" type="submit" className="w-100">Signup</Button>
+
+                <div className="text-center mt-3">
+                    <Button variant="link" onClick={() => navigate("/login")}>
+                        Already have an account? Login
+                    </Button>
+                </div>
+            </Form>
         </div>
     );
 }
