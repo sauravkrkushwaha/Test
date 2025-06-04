@@ -1,3 +1,4 @@
+require('dotenv').config(); // Make sure env variables are loaded if needed
 const User = require('../models/User');
 const Trainer = require('../models/Trainer');
 const { generateUserToken, generateTrainerToken } = require('../utils/generateToken');
@@ -24,6 +25,7 @@ const registerUser = async (req, res) => {
       res.status(400).json({ message: 'Invalid user data' });
     }
   } catch (err) {
+    console.error('Register User Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -44,16 +46,12 @@ const loginUser = async (req, res) => {
       res.status(401).json({ message: 'Invalid credentials' });
     }
   } catch (err) {
+    console.error('Login User Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
 
-
-// --------------------------------------------------------------------------------------------------
 // TRAINER CONTROLLERS
-const Trainer = require('../models/trainerModel');
-const generateTrainerToken = require('../utils/generateTrainerToken'); // Make sure this file exists and exports a JWT function
-
 const registerTrainer = async (req, res) => {
   try {
     const {
@@ -66,7 +64,7 @@ const registerTrainer = async (req, res) => {
       password,
     } = req.body;
 
-    // Check if name is provided (basic validation)
+    // Basic required field validation
     if (!name || !type || !password || !packages) {
       return res.status(400).json({ message: 'Required fields missing' });
     }
@@ -76,7 +74,7 @@ const registerTrainer = async (req, res) => {
       return res.status(400).json({ message: 'Trainer already exists' });
     }
 
-    // File path
+    // Profile photo path if uploaded
     const profilePhoto = req.file ? `/uploads/${req.file.filename}` : null;
 
     // Parse JSON fields if they come as strings
@@ -102,7 +100,7 @@ const registerTrainer = async (req, res) => {
       token: generateTrainerToken(trainer._id),
     });
   } catch (err) {
-    console.error('Register error:', err);
+    console.error('Register Trainer Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
@@ -122,8 +120,39 @@ const loginTrainer = async (req, res) => {
       token: generateTrainerToken(trainer._id),
     });
   } catch (err) {
+    console.error('Login Trainer Error:', err);
     res.status(500).json({ message: 'Server error', error: err.message });
   }
+};
+
+const getUserProfile = async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  res.json({
+    _id: req.user._id,
+    username: req.user.username,
+    email: req.user.email,
+    phone: req.user.phone,
+  });
+};
+
+const getTrainerProfile = async (req, res) => {
+  if (!req.trainer) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
+
+  res.json({
+    _id: req.trainer._id,
+    name: req.trainer.name,
+    type: req.trainer.type,
+    profilePhoto: req.trainer.profilePhoto,
+    speciality: req.trainer.speciality,
+    aboutMe: req.trainer.aboutMe,
+    certifications: req.trainer.certifications,
+    packages: req.trainer.packages,
+  });
 };
 
 module.exports = {
@@ -131,4 +160,8 @@ module.exports = {
   loginUser,
   registerTrainer,
   loginTrainer,
+  getUserProfile,
+  getTrainerProfile,
 };
+
+

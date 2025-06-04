@@ -1,7 +1,9 @@
 const express = require('express');
-const { registerTrainer, loginTrainer } = require('../controllers/authController');
+// const { registerTrainer, loginTrainer } = require('../controllers/authController');
 const { protectTrainer } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
+const { registerTrainer, loginTrainer, getTrainerProfile } = require('../controllers/authController');
+
 
 const router = express.Router();
 
@@ -13,12 +15,7 @@ router.post('/signup', upload.single('profilePhoto'), (req, res, next) => {
 
 router.post('/login', loginTrainer);
 
-// Protected route example
-router.get('/profile', protectTrainer, (req, res) => {
-  res.json({
-    message: 'Trainer profile accessed',
-    trainer: req.trainer,
-  });
-});
+// ✅ Clean profile route using controller
+router.get('/profile', protectTrainer, getTrainerProfile);
 
 module.exports = router;

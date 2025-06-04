@@ -19,13 +19,11 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare payload: use 'username' for client, 'name' for coach
     const payload =
       loginType === "coach"
         ? { name: formData.username, password: formData.password }
         : { username: formData.username, password: formData.password };
 
-    // Determine endpoint
     const endpoint =
       loginType === "coach"
         ? "http://localhost:5000/api/trainer/login"
@@ -33,13 +31,18 @@ function Login() {
 
     try {
       const res = await axios.post(endpoint, payload);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("userType", loginType);
+
+      // Log token to console
+      console.log("Token received:", res.data.token);
 
       if (loginType === "coach") {
+        localStorage.setItem("trainerToken", res.data.token);
+        localStorage.removeItem("token");
         navigate("/coach-profile");
       } else {
-        navigate("/coach-list");
+        localStorage.setItem("token", res.data.token);
+        localStorage.removeItem("trainerToken");
+        navigate("/user-profile");
       }
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -50,7 +53,6 @@ function Login() {
     <div className="login-container">
       <h2 className="text-center mb-4">Login</h2>
       <Form onSubmit={handleSubmit}>
-        {/* Login Type */}
         <Form.Group className="mb-3" controlId="formLoginType">
           <Form.Label>Login As</Form.Label>
           <Form.Select
@@ -63,7 +65,6 @@ function Login() {
           </Form.Select>
         </Form.Group>
 
-        {/* Username or Name */}
         <Form.Group className="mb-3" controlId="formUsername">
           <Form.Label>{loginType === "coach" ? "Name" : "Username"}</Form.Label>
           <Form.Control
@@ -76,7 +77,6 @@ function Login() {
           />
         </Form.Group>
 
-        {/* Password */}
         <Form.Group className="mb-3" controlId="formPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -89,7 +89,6 @@ function Login() {
           />
         </Form.Group>
 
-        {/* Error Message */}
         {error && <div className="text-danger text-center mb-3">{error}</div>}
 
         <Button variant="dark" type="submit" className="w-100">

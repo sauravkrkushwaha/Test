@@ -1,3 +1,5 @@
+require('dotenv').config(); // Ensure env variables are loaded
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Trainer = require('../models/Trainer');
@@ -6,7 +8,7 @@ const Trainer = require('../models/Trainer');
 const extractToken = (req) => {
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith('Bearer ')
   ) {
     return req.headers.authorization.split(' ')[1];
   }
@@ -29,6 +31,7 @@ const protectUser = async (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.error('User token verification failed:', error);
     res.status(401).json({ message: 'Not authorized, token failed' });
   }
 };
@@ -49,6 +52,7 @@ const protectTrainer = async (req, res, next) => {
     }
     next();
   } catch (error) {
+    console.error('Trainer token verification failed:', error);
     res.status(401).json({ message: 'Not authorized, token failed' });
   }
 };

@@ -39,8 +39,15 @@ function Signup() {
                 password: formData.password,
             });
 
+            const token = res.data.token;
+
+
+            
             setSuccess(res.data.message);
             localStorage.setItem("token", res.data.token);
+
+            // console.log("Logged in token:", res.data.token);
+
             setTimeout(() => navigate("/coach-list"), 1000);
         } catch (err) {
             setError(err.response?.data?.message || "Registration failed");

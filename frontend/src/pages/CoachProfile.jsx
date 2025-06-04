@@ -1,188 +1,165 @@
-// import React from "react";
-import * as React from 'react';
-import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMessage } from '@fortawesome/free-regular-svg-icons';
-import imageIr from '../assets/image/injury_rehab_e9a0a93435.webp';
-import './CoachProfile.css'; // Import the CSS file
-import Rating from '@mui/material/Rating';
-import { styled } from '@mui/material/styles';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
-// Custom styled Rating component
-const CustomRating = styled(Rating)({
-    '& .MuiRating-icon': {
-        fontSize: '5rem', // Increase the size of the stars
-    },
-    '& .MuiRating-iconEmpty': {
-        color: '#ddd', // Optional: Change the color of empty stars
-    },
-});
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function CoachProfile() {
-    const [value, setValue] = React.useState(2);
-    const [visibleReviews, setVisibleReviews] = React.useState(4); // State to track the number of visible reviews
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
 
-    const reviews = [
-        { id: 1, reviewer: "Alice", date: "12th Oct 2023", text: "Great coach! Highly recommend." },
-        { id: 2, reviewer: "Bob", date: "15th Oct 2023", text: "Very professional and knowledgeable." },
-        { id: 3, reviewer: "Charlie", date: "18th Oct 2023", text: "Helped me achieve my fitness goals!" },
-        { id: 4, reviewer: "Diana", date: "20th Oct 2023", text: "Amazing experience, will book again." },
-        { id: 5, reviewer: "Eve", date: "22nd Oct 2023", text: "Friendly and motivating coach." },
-        { id: 6, reviewer: "Frank", date: "25th Oct 2023", text: "Very knowledgeable and helpful." },
-        { id: 7, reviewer: "Grace", date: "28th Oct 2023", text: "Excellent coach, highly recommend!" },
-        { id: 8, reviewer: "Hank", date: "30th Oct 2023", text: "Helped me achieve my fitness goals quickly." },
-    ];
+  useEffect(() => {
+    const token = localStorage.getItem("trainerToken");
 
-    const handleLoadMore = () => {
-        setVisibleReviews((prev) => prev + 4); // Increase the number of visible reviews by 4
-    };
+    axios
+      .get("http://localhost:5000/api/trainer/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        setProfile(res.data);
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+        setError(err.response?.data?.message || "Failed to fetch coach profile");
+      });
+  }, []);
 
+  if (error) {
     return (
-        <div className="main-container">
-            <div className="profile-header">
-                <img src={imageIr} alt="profile" className="profile-image" />
-                <div className="coach-info">
-                    <h1 className="name">Bikas Bhujabala</h1>
-                    <p className="specialty">Specialty: Strength & Conditioning</p>
-                </div>
-                <Button variant="outline-dark" className="message-button">
-                    <FontAwesomeIcon icon={faMessage} />
-                    Chat with Coach
-                </Button>
-            </div>
-            <div className="about-me-card">
-                <h3 className="about">About Me</h3>
-                <p className="description">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque tenetur quae doloribus recusandae mollitia repellendus molestias tempora a animi eveniet in at non modi veritatis, voluptates magni eius delectus vitae quo accusamus nesciunt? Enim soluta voluptatum totam incidunt? Ipsum quae magni laudantium natus nam quasi distinctio velit eveniet, odit temporibus!
-                </p>
-            </div>
-            <div className="achievement">
-                <div className="speciality-card">
-                    <h3 className="title">Speciality</h3>
-                    <div className="speciality-item">
-                        <p className="speciality-text">Strength & Conditioning</p>
-                        <p className="speciality-text">Yoga & Wellness</p>
-                        <p className="speciality-text">Cardio & Endurance</p>
-                        <p className="speciality-text">Weight Loss</p>
-                        <p className="speciality-text">Rehabilitation</p>
-                    </div>
-                </div>
-                <div className="certificates-card">
-                    <h3 className="title">Certificates</h3>
-                    <div className="certificate-item">
-                        <p className="certificate-text">Certified Strength & Conditioning Specialist (CSCS)</p>
-                        <p className="certificate-text">Certified Strength & Conditioning Specialist (CSCS)</p>
-                        <p className="certificate-text">Certified Strength & Conditioning Specialist (CSCS)</p>
-                        <p className="certificate-text">Certified Strength & Conditioning Specialist (CSCS)</p>
-                    </div>
-                </div>
-            </div>
-            <div className="package">
-                <h3 className="title">Choose Your Package</h3>
-                <div className="plan">
-                    <div className="plan-option">
-                        <span className="plan-name">Monthly Package</span>
-                        <div className="price-container">
-                            <span className="plan-price">$50</span>
-                            <span className="original-price">$62.50</span>
-                        </div>
-                    </div>
-                    <div className="plan-option">
-                        <span className="plan-name">Quarterly Package</span>
-                        <div className="price-container">
-                            <span className="plan-price">$140</span>
-                            <span className="original-price">$175.00</span>
-                        </div>
-                    </div>
-                    <div className="plan-option">
-                        <span className="plan-name">Half-Yearly Package</span>
-                        <div className="price-container">
-                            <span className="plan-price">$270</span>
-                            <span className="original-price">$337.50</span>
-                        </div>
-                    </div>
-                    <div className="plan-option">
-                        <span className="plan-name">Yearly Package</span>
-                        <div className="price-container">
-                            <span className="plan-price">$500</span>
-                            <span className="original-price">$625.00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div className="reviews">
-                <h3 className="title">Review</h3>
-                <div className="rating-container">
-                    {/* Left: Stars for giving a rating */}
-                    <div className="rating-input">
-                        <CustomRating
-                            name="simple-controlled"
-                            value={value}
-                            onChange={(event, newValue) => {
-                                setValue(newValue);
-                            }}
-                            size="large" // Optional: Keep this for consistency
-                            icon={<StarIcon fontSize="inherit" />} // Custom filled star icon
-                            emptyIcon={<StarBorderIcon fontSize="inherit" />} // Custom empty star icon
-                        />
-                    </div>
-
-                    {/* Right: Average rating */}
-                    <div className="avg-rating">
-                        <p className="avgRating-text">Average Rating</p>
-                        <div className="avgRating-value-container">
-                            <h1 className="avgRating-value">4.5</h1>
-                            <h1 className="avgRating-text">/5</h1>
-                        </div>
-                        <Rating name="half-rating-read" defaultValue={4.5} precision={0.1} readOnly size="large" />
-                    </div>
-                </div>
-
-                {/* Add Review Section */}
-                <div className="add-review">
-                    <textarea
-                        className="review-textarea"
-                        placeholder="Write your review here..."
-                        rows="4"
-                    ></textarea>
-                    <Button variant="outline-dark" className="post-review-button">
-                        Post
-                    </Button>
-                </div>
-
-                {/* Reviews Section */}
-                <div className="reviews-box">
-                    <Row className="g-4">
-                        {reviews.slice(0, visibleReviews).map((review) => (
-                            <Col md={6} xs={12} key={review.id}>
-                                <div className="review-card">
-                                    <div className="review-author">
-                                        <img src={imageIr} alt="profile" className="review-image" />
-                                        <h4 className="reviewer-name">{review.reviewer}</h4>
-                                        <p className="review-date">{review.date}</p>
-                                    </div>
-                                    <div className="review-content">
-                                        <p className="review-text">{review.text}</p>
-                                    </div>
-                                </div>
-                            </Col>
-                        ))}
-                    </Row>
-                    {visibleReviews < reviews.length && ( // Show the button only if there are more reviews to load
-                        <div className="load-more-container">
-                            <Button variant="outline-dark" onClick={handleLoadMore}>
-                                Load More
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
+      <div className="text-red-600 text-center mt-6 text-lg font-semibold">
+        Error: {error}
+      </div>
     );
+  }
+
+  if (!profile) {
+    return (
+      <div className="text-center mt-6 text-lg font-medium text-gray-600">
+        Loading coach profile...
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg mt-8">
+      <h2 className="text-4xl font-extrabold text-center mb-8 text-gray-900">
+        Coach Profile
+      </h2>
+
+      <div className="flex flex-col md:flex-row md:space-x-10">
+        {/* Profile Image Section */}
+        <div className="flex-shrink-0 flex justify-center mb-6 md:mb-0">
+          {profile.profilePhoto ? (
+            <img
+              src={`http://localhost:5000${profile.profilePhoto}`}
+              alt="Coach"
+              className="w-40 h-40 rounded-full object-cover border-4 border-indigo-500 shadow-md"
+            />
+          ) : (
+            <div className="w-40 h-40 rounded-full bg-gray-200 flex items-center justify-center text-gray-400 font-semibold text-lg">
+              No Photo
+            </div>
+          )}
+        </div>
+
+        {/* Profile Details */}
+        <div className="flex-grow space-y-6 text-gray-800">
+          <p className="text-xl">
+            <strong>Name:</strong> {profile.name || "No data available"}
+          </p>
+
+          <p className="text-xl">
+            <strong>Type:</strong> {profile.type || "No data available"}
+          </p>
+
+          <p className="text-xl">
+            <strong>Specialities:</strong>{" "}
+            {profile.speciality && profile.speciality.length > 0
+              ? profile.speciality.join(", ")
+              : "No data available"}
+          </p>
+
+          <p className="text-xl">
+            <strong>About Me:</strong> {profile.aboutMe || "No data available"}
+          </p>
+
+          <div>
+            <strong className="text-xl">Certifications:</strong>
+            <ul className="list-disc ml-6 mt-2 space-y-1 text-lg">
+              {profile.certifications && profile.certifications.length > 0 ? (
+                profile.certifications.map((cert, idx) => (
+                  <li key={idx}>{cert}</li>
+                ))
+              ) : (
+                <li>No data available</li>
+              )}
+            </ul>
+          </div>
+
+          <div>
+            <strong className="text-xl">Packages (INR):</strong>
+            {profile.packages ? (
+              <ul className="list-disc ml-6 mt-2 space-y-1 text-lg">
+                <li>Monthly: ₹{profile.packages.monthly ?? "N/A"}</li>
+                <li>Quarterly: ₹{profile.packages.quarterly ?? "N/A"}</li>
+                <li>Half-Yearly: ₹{profile.packages.halfYearly ?? "N/A"}</li>
+                <li>Yearly: ₹{profile.packages.yearly ?? "N/A"}</li>
+              </ul>
+            ) : (
+              <p className="mt-2">No data available</p>
+            )}
+          </div>
+
+          <p className="text-xl">
+            <strong>Average Rating:</strong>{" "}
+            {profile.averageRating || "No data available"}
+          </p>
+
+          <p className="text-xl">
+            <strong>WhatsApp:</strong>{" "}
+            <a
+              href="https://wa.me/918864084387"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-600 underline hover:text-green-800 transition"
+            >
+              Message on WhatsApp
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-12">
+        <h3 className="text-3xl font-semibold mb-6 text-gray-900">Reviews</h3>
+        {profile.reviews && profile.reviews.length > 0 ? (
+          <ul className="space-y-6 max-h-96 overflow-y-auto pr-2">
+            {profile.reviews.map((review, index) => (
+              <li
+                key={index}
+                className="border border-gray-300 p-5 rounded-lg shadow-sm hover:shadow-md transition"
+              >
+                <p className="text-lg">
+                  <strong>User:</strong> {review.userName}
+                </p>
+                <p className="text-lg">
+                  <strong>Rating:</strong> {review.rating} / 5
+                </p>
+                <p className="text-lg">
+                  <strong>Comment:</strong> {review.comment || "No comment"}
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  <strong>Date:</strong>{" "}
+                  {new Date(review.date).toLocaleDateString()}
+                </p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-lg text-gray-600">No reviews available</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default CoachProfile;

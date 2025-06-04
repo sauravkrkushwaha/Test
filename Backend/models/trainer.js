@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+// Review sub-schema
 const reviewSchema = new mongoose.Schema({
   userName: { type: String, required: true },
   rating: { type: Number, min: 1, max: 5, required: true },
@@ -8,35 +9,40 @@ const reviewSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now }
 });
 
+// Main Trainer schema
 const trainerSchema = new mongoose.Schema({
-  type: { type: String, required: true },
-  name: { type: String, required: true, unique: true },
+  type: { type: String, required: true, enum: ['trainer', 'coach', 'advisor'] }, // Optional enum
+  name: { type: String, required: true, unique: true, trim: true },
   password: { type: String, required: true },
-  profilePhoto: { type: String },
+  profilePhoto: { type: String, default: '' },
   speciality: {
     type: [String],
-    default: []
+    default: [],
   },
-  aboutMe: { type: String },
+  aboutMe: { type: String, default: '' },
   certifications: {
     type: [String],
     validate: [arr => arr.length <= 4, 'Maximum 4 certification links allowed'],
-    default: []
+    default: [],
   },
   packages: {
-    monthly: { type: Number, required: true },
-    quarterly: { type: Number, required: true },
-    halfYearly: { type: Number, required: true },
-    yearly: { type: Number, required: true }
+    monthly: { type: Number, required: true, min: 0 },
+    quarterly: { type: Number, required: true, min: 0 },
+    halfYearly: { type: Number, required: true, min: 0 },
+    yearly: { type: Number, required: true, min: 0 },
   },
   reviews: {
     type: [reviewSchema],
-    default: []
+    default: [],
   },
   averageRating: {
     type: Number,
-    default: null
-  }
+    default: null,
+    min: 1,
+    max: 5,
+  },
+}, {
+  timestamps: true, // Adds createdAt and updatedAt fields
 });
 
 // Hash password before saving
